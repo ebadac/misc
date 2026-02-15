@@ -1,0 +1,43 @@
+# WIP Workflow Git Aliases
+# Usage:
+
+# Global 설정 (모든 프로젝트에 적용)
+# git config --global include.path /absolute/path/to/wip-aliases.gitconfig
+# 또는 Local 설정 (현재 프로젝트만)
+# git config --local include.path ./wip-aliases.gitconfig
+
+#   git done     - Save work in progress
+#   git continue - Pull latest changes
+#   git finish   - Merge to main with squash
+
+
+[alias]
+    done = "!f() { \
+        branch=$(git branch --show-current); \
+        if [ \"$branch\" = \"main\" ] || [ \"$branch\" = \"master\" ]; then \
+            echo \"Error: Cannot use 'done' on main/master branch\"; \
+            return 1; \
+        fi; \
+        if [ -z \"$(git status --porcelain)\" ]; then \
+            echo \"No changes to commit\"; \
+            return 0; \
+        fi; \
+        git add . && \
+        git commit -m \"WIP: $(date +\\\"%Y-%m-%d %H:%M\\\")\" && \
+        git push && \
+        echo \"Work saved successfully on branch: $branch\"; \
+    }; f"
+
+    continue = "!git pull && echo \"Latest changes pulled successfully\""
+
+    finish = "!f() { \
+        current=$(git branch --show-current); \
+        if [ \"$current\" = \"main\" ] || [ \"$current\" = \"master\" ]; then \
+            echo \"Error: Already on main/master branch\"; \
+            return 1; \
+        fi; \
+        git checkout main && \
+        git pull && \
+        git merge --squash \"$current\" && \
+        echo \"Changes staged. Please commit with proper message: git commit -m \\\"your message\\\"\"; \
+    }; f"
