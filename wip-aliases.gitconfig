@@ -12,20 +12,21 @@
 
 
 [alias]
-    done = "!/bin/sh -c 'branch=$(git branch --show-current); \
+    done = "!f() { \
+        branch=$(git branch --show-current); \
         if [ \"$branch\" = \"main\" ] || [ \"$branch\" = \"master\" ]; then \
             echo \"Error: Cannot use 'done' on main/master branch\"; \
-            exit 1; \
+            return 1; \
         fi; \
         if [ -z \"$(git status --porcelain)\" ]; then \
             echo \"No changes to commit\"; \
-            exit 0; \
+            return 0; \
         fi; \
         git add . && \
-            ts=$(date +%Y-%m-%dT%H:%M) && \
-        git commit -m \"WIP: $ts\" && \
+        git commit -m \"WIP: $(date +\\\"%Y-%m-%d %H:%M\\\")\" && \
         git push && \
-        echo \"Work saved successfully on branch: $branch\"'"
+        echo \"Work saved successfully on branch: $branch\"; \
+    }; f"
 
     continue = "!git pull && echo \"Latest changes pulled successfully\""
 
