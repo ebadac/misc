@@ -23,7 +23,7 @@
             return 0; \
         fi; \
         git add . && \
-        git commit -m \"WIP: $(date +\\\"%Y-%m-%d %H:%M\\\")\" && \
+        git commit -m \"WIP: $(date '+%Y-%m-%d %H:%M')\" && \
         git push && \
         echo \"Work saved successfully on branch: $branch\"; \
     }; f"
